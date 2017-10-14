@@ -1,0 +1,24 @@
+[package]
+name = "markov-rs"
+version = "0.1.0"
+authors = ["Lignum <me@lignum.pw>"]
+
+[dependencies]
+regex = "*"
+lazy_static = "*"
+serde = "*"
+serde_derive = "*"
+bincode = "*"
+rand = "*"
+
+[lib]
+name = "markov_core"
+path = "src/core/lib.rs"
+
+[[bin]]
+name = "markov-gen"
+path = "src/gen/main.rs"
+
+[[bin]]
+name = "markov"
+path = "src/main.rs"
