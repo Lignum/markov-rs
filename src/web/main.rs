@@ -39,6 +39,10 @@ fn index(ctx: State<Context>, name: String) -> Result {
     let chain_path = Path::new(&ctx.chain_dir).join(format!("messages-{}.mkv", name));
     let chain_path_str = chain_path.to_str().expect("Invalid chain path!");
 
+    if !chain_path.exists() || !chain_path.is_file() {
+        return Response::build().status(Status::NotFound).ok();
+    }
+
     match chain::deserialise_chain(chain_path_str) {
         Ok(chain) => {
             let sentence = chain::generate_sentence(&mut rng, &chain);
