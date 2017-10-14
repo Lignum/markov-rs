@@ -4,4 +4,4 @@
 *.iml
 *.mkv
 *.txt
-test.txt
+/gen/
