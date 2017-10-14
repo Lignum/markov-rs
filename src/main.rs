@@ -42,11 +42,23 @@ fn generate_sentence<R: Rng>(rng: &mut R, chain: Graph<ChainNode, f64>) -> Strin
 }
 
 fn main() {
+    let args: Vec<_> = std::env::args().collect();
+    let prog_name = &args[0];
+
+    if args.len() < 2 {
+        eprintln!("Usage: {} [file]", prog_name);
+        return;
+    }
+
+    let filename = &args[1];
     let mut rng = rand::thread_rng();
 
-    let chain = match deserialise_chain("test.mkv") {
+    let chain = match deserialise_chain(filename) {
         Ok(chain) => chain,
-        Err(err) => panic!("{}", err)
+        Err(err) => {
+            eprintln!("{}", err);
+            return;
+        }
     };
 
     println!("{}", generate_sentence(&mut rng, chain));

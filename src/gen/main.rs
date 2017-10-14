@@ -5,6 +5,7 @@ extern crate regex;
 use std::fs::File;
 use std::io::Read;
 use std::collections::HashMap;
+use std::path::Path;
 
 use regex::Regex;
 
@@ -35,9 +36,7 @@ fn normalise_chain(chain: Graph<ChainNode, u64>, start_node: usize) -> Graph<Cha
 
         nodes_from.iter()
             .map(|&(i, _)| (i, *chain.weight(start, i).unwrap() as f64 / sum))
-            .for_each(|(i, w)| {
-                edges.insert((start, i), w);
-            });
+            .for_each(|(i, w)| { edges.insert((start, i), w); });
     }
 
     let mut nodes: Vec<ChainNode> = vec![ChainNode::End; chain.len()];
@@ -102,8 +101,25 @@ fn sentences(text: &str) -> Vec<String> {
 }
 
 fn main() {
+    let args: Vec<_> = std::env::args().collect();
+    let prog_name = &args[0];
+
+    if args.len() < 2 {
+        eprintln!("Usage: {} [file] <output file>", prog_name);
+        return;
+    }
+
+    let input_file = &args[1];
+    let input_root = match Path::new(input_file).file_stem().and_then(|s| s.to_str()) {
+        Some(root) => root,
+        None => "out"
+    };
+
+    let default_output_file = format!("{}.mkv", input_root);
+    let output_file = args.get(2).unwrap_or(&default_output_file);
+
     let text = {
-        let mut file = File::open("test.txt").expect("Couldn't open file test.txt!!");
+        let mut file = File::open(input_file).expect("Couldn't open file test.txt!!");
         let mut content = String::new();
         file.read_to_string(&mut content).expect("Failed to read test.txt!!");
         content
@@ -111,8 +127,8 @@ fn main() {
 
     let chain = generate_chain(sentences(text.as_str()));
 
-    match serialise_chain(chain, "test.mkv") {
-        Ok(()) => println!("Successfully generated test.mkv"),
+    match serialise_chain(chain, output_file) {
+        Ok(()) => println!("Successfully generated {}", output_file),
         Err(err) => eprintln!("Error occurred: {}", err)
     }
 }
