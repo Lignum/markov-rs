@@ -10,6 +10,8 @@ serde = "*"
 serde_derive = "*"
 bincode = "*"
 rand = "*"
+rocket = "*"
+rocket_codegen = "*"
 
 [lib]
 name = "markov_core"
@@ -22,3 +24,7 @@ path = "src/gen/main.rs"
 [[bin]]
 name = "markov"
 path = "src/main.rs"
+
+[[bin]]
+name = "markov-web"
+path = "src/web/main.rs"
